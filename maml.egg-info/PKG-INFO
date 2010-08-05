@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: maml
+Version: 0.0dev
+Summary: Mako Abstract Markup Language
+Home-page: UNKNOWN
+Author: Brian Hawthorne
+Author-email: hawthorne@amyris.com
+License: UNKNOWN
+Description: HAML-alike for Mako
+Keywords: Mako HTML Haml Markup Template
+Platform: UNKNOWN
