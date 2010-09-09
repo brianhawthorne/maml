@@ -1,6 +1,7 @@
 setup.cfg
 setup.py
 maml/__init__.py
+maml/lookup.py
 maml.egg-info/PKG-INFO
 maml.egg-info/SOURCES.txt
 maml.egg-info/dependency_links.txt
