@@ -31,7 +31,9 @@ html_identifier = Word(alphas+'_-', alphanums+'_-')
 tag_name = '%' + identifier
 tag_class = '.' + html_identifier
 tag_id = '#' + html_identifier
-tag_attrs = '[' + SkipTo(']') + ']'
+tag_literal_attrs = '(' + SkipTo(')') + ')'
+tag_dynamic_attrs = '{' + SkipTo('}') + '}'
+tag_attrs = ZeroOrMore(tag_literal_attrs) + ZeroOrMore(tag_dynamic_attrs)
 tag_decl = ((tag_name + ZeroOrMore( tag_class | tag_id )) | OneOrMore( tag_class | tag_id )) + Optional(tag_attrs) + Optional('=') + SkipTo(StringEnd())
 
 # mako *def*
