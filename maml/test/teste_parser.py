@@ -50,10 +50,15 @@ class TestParser (TestCase):
 
     def test_tag_attrs(self):
         good_results = {
+          '()': ('(', '', ')'),
+          '{}': ('{', '', '}'),
+          '(borp="baz" dorp="daz" blarp="blaz")':
+            ('(', 'borp="baz" dorp="daz" blarp="blaz"', ')'),
+          '{borp:"baz", dorp:"daz", blarp:"blaz"}':
+            ('{', 'borp:"baz", dorp:"daz", blarp:"blaz"', '}'),
         }
-        parts = tuple(tag_attrs.parseString(''))
-
-
+        for input, output in good_results.items():
+            self.assertEqual(tuple(tag_attrs.parseString(input)), output)
 
     def test_tag_decl(self):
         good_results = {
@@ -69,6 +74,10 @@ class TestParser (TestCase):
             ('%', 'html', '.', 'class-name', '(', '', ')', '=', 'foo'),
           '%html.class-name(borp="baz")= foo':
             ('%', 'html', '.', 'class-name', '(', 'borp="baz"', ')', '=', 'foo'),
+          '#foo.boo':
+            ('#', 'foo', '.', 'boo', ''),
+          '.foo(){}':
+            ('.', 'foo', '(', '', ')', '{', '', '}', ''),
         }
         for input, output in good_results.items():
             self.assertEqual(tuple(tag_decl.parseString(input)), output)

@@ -180,6 +180,17 @@ class Block (ParseNode):
         self.render_end(outs)
 
 
+class HtmlTagAttrs (Expression):
+    pass
+
+class DynamicHtmlTagAttrs (Expression):
+
+
+    def __init__(self, parent, text):
+        text = "' '.join('%%s=\"%%s\"'%% item for item in {%s}.items())"% text
+        Expression.__init__(self, parent=parent, text=text)
+
+
 ################################################################################
 class HtmlTag (Block):
     attrs(
@@ -203,12 +214,11 @@ class HtmlTag (Block):
 
     def __init__(self, parent, line):
         parts = tag_decl.parseString(line) #line.split(' ', 1)
-        print line, parts
 
         self._tagname = 'div'
         self._classes = []
         self._identifier = None
-        self._attrs = ''
+        self._attrs = []
         child = None
 
         while parts:
@@ -224,9 +234,12 @@ class HtmlTag (Block):
                 self._classes.append(content)
             elif kind == '#':
                 self._identifier = content
-            elif kind == '[':
-                assert parts.pop(0) == ']'
-                self._attrs = content
+            elif kind == '{':
+                assert parts.pop(0) == '}'
+                self._attrs.append(DynamicHtmlTagAttrs(None, content))
+            elif kind == '(':
+                assert parts.pop(0) == ')'
+                self._attrs.append(Literal(None, content))
             elif kind == '=':
                 child = Expression(self, content)
             elif content:
@@ -247,7 +260,7 @@ class HtmlTag (Block):
     def render_start(self, outs):
         class_str = ' class="%s"'% ' '.join(self.classes) if self.classes else ''
         ident_str = ' id="%s"'% self.identifier if self.identifier else ''
-        attrs_str = ' %s' % self.attrs if self.attrs else ''
+        attrs_str = ' %s' % ' '.join(a.render_string() for a in self.attrs) if self.attrs else ''
         closing_str = ' /' if self.is_self_closing else ''
         print >> outs, '<%s%s%s%s%s>'% \
           (self._tagname, ident_str, class_str, attrs_str, closing_str)
