@@ -401,7 +401,6 @@ class Parser (object):
                 stack.pop()
 
             self._block = stack.block
-            #print stack
             self._block.children.append(node)
 
         return self._block.root
